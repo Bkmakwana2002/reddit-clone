@@ -1,7 +1,8 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Flex, Icon, Menu, MenuButton, MenuList, Text } from '@chakra-ui/react';
-import React from 'react';
+import { ChevronDownIcon } from '@chakra-ui/icons'
+import { Flex, Icon, Menu, MenuButton, MenuList, Text } from '@chakra-ui/react'
+import React from 'react'
 import { TiHome } from 'react-icons/ti'
+import Communites from './Communites'
 
 const UserMenu: React.FC = () => {
 
@@ -20,8 +21,7 @@ const UserMenu: React.FC = () => {
                 </Flex>
             </MenuButton>
             <MenuList>
-              {/* <Communities/> */}
-              Communitites
+              <Communites/>
             </MenuList>
         </Menu>
     )
