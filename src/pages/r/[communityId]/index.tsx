@@ -1,12 +1,12 @@
 import { doc, getDoc } from 'firebase/firestore';
-import { GetServerSideProps } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import React from 'react';
+import safeJsonStringigy from 'safe-json-stringify';
 import { Community } from '../../../atoms/communititesAtom';
-import { firestore } from '../../../firebase/clientApp';
-import safeJsonStringigy from 'safe-json-stringify'
-import NotFound from '../../../components/community/NotFound'
 import Header from '../../../components/community/Header';
+import NotFound from '../../../components/community/NotFound';
 import PageContext from '../../../components/Layout/PageContext';
+import { firestore } from '../../../firebase/clientApp';
 
 type CommunityPageProps = {
     communityData: Community
@@ -18,7 +18,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
 
     if (!communityData) {
         return (<NotFound />)
-    }
+    }   
 
     return (
         <>
@@ -39,7 +39,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
     )
 }
 
-export async function getServerSideProps(context: GetServerSideProps) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
     try {
         const communityDocRef = doc(firestore, 'communities', context.query.communityId as string)
 
