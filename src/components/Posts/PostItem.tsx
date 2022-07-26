@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Post } from '../../atoms/postAtom'
 import { AiOutlineDelete } from "react-icons/ai";
 import { BsChat, BsDot } from "react-icons/bs";
@@ -11,7 +11,7 @@ import {
   IoArrowUpCircleSharp,
   IoBookmarkOutline,
 } from "react-icons/io5";
-import { Flex, Icon, Stack, Text } from '@chakra-ui/react';
+import { Flex, Icon, Image, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { GrAnalytics } from 'react-icons/gr';
 import moment from 'moment'
 
@@ -25,6 +25,8 @@ type PostItemProps = {
 };
 
 const PostItem: React.FC<PostItemProps> = ({ post,userIsCreator,userVoteValue,onVote,onDeletePost,onSelectPost }) => {
+ 
+    const [loadingImage, setLoadingImage] = useState(true)
 
     return (
         <Flex border='1px solid' bg='white' borderColor='gray.300' borderRadius={4} _hover={{ borderColor:'gray.500' }}
@@ -41,7 +43,33 @@ const PostItem: React.FC<PostItemProps> = ({ post,userIsCreator,userVoteValue,on
                        {/* Home Page */}
                        <Text>Posted By u/{post.creatorDisplayName} {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()} </Text>
                    </Stack>
+                    <Text fontSize='12pt' fontWeight={600}>{post.title}</Text>
+                    <Text fontSize='10pt'>{post.body}</Text>
+                    {post.imageUrl && (
+                      <Flex justify='center' align='center' p={2}>
+                          { loadingImage && <Skeleton height='200px' width='100%' borderRadius={4} /> }
+                         <Image display={ loadingImage ? 'none' : 'unset' } onLoad={()=>setLoadingImage(false)} src={post.imageUrl} maxHeight='460px' alt='Post Image'/>
+                      </Flex>
+                    )}
               </Stack>
+              <Flex ml={1} mb={0.5} color='gray.500'>
+                  <Flex align='center' p='8px 10px' borderRadius={4} _hover= {{ bg:'gray.200' }} cursor='pointer'>
+                    <Icon as={BsChat} mr={2}/>
+                    <Text fontSize='9pt'>{post.numberOfComments}</Text>
+                  </Flex>
+                  <Flex align='center' p='8px 10px' borderRadius={4} _hover= {{ bg:'gray.200' }} cursor='pointer'>
+                    <Icon as={IoArrowRedoOutline} mr={2}/>
+                    <Text fontSize='9pt'>Share</Text>
+                  </Flex>
+                  <Flex align='center' p='8px 10px' borderRadius={4} _hover= {{ bg:'gray.200' }} cursor='pointer'>
+                    <Icon as={IoBookmarkOutline} mr={2}/>
+                    <Text fontSize='9pt'>Save</Text>
+                  </Flex>
+                  { userIsCreator && <Flex align='center' p='8px 10px' borderRadius={4} _hover= {{ bg:'gray.200' }} cursor='pointer'onClick={onDeletePost}>
+                    <Icon as={AiOutlineDelete} mr={2}/>
+                    <Text fontSize='9pt'>Delete</Text>
+                  </Flex>}
+              </Flex>
            </Flex>
         </Flex>
     )
