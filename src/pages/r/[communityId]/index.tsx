@@ -1,8 +1,10 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { GetServerSidePropsContext } from 'next';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import safeJsonStringigy from 'safe-json-stringify';
-import { Community } from '../../../atoms/communititesAtom';
+import { Community, communityState } from '../../../atoms/communititesAtom';
+import About from '../../../components/community/About';
 import CreatePostLink from '../../../components/community/CreatePostLink';
 import Header from '../../../components/community/Header';
 import NotFound from '../../../components/community/NotFound';
@@ -17,10 +19,19 @@ type CommunityPageProps = {
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
 
     console.log("data", communityData)
+    const setCommunityStateValue = useSetRecoilState(communityState)
 
     if (!communityData) {
         return (<NotFound />)
     }   
+
+    useEffect(() => {
+      setCommunityStateValue(prev=>({
+        ...prev,
+        currentCommunity: communityData
+      }))
+    }, [])
+    
 
     return (
         <>
@@ -31,9 +42,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
                     <Posts communityData={communityData}/>
                 </>
                 <>
-                    <div>
-                        RHS
-                    </div>
+                    <About communityData={communityData}/>
                 </>
             </PageContext>
         </>
@@ -48,7 +57,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
         return {
             props: {
-                communityData: communityDoc.exists() ? JSON.parse(safeJsonStringigy({ id: communityDoc.id, ...communityDoc.data })) : ''
+                communityData: communityDoc.exists() ? JSON.parse(safeJsonStringigy({ id: communityDoc.id, ...communityDoc.data() })) : ''
             }
         }
     } catch (error) {
