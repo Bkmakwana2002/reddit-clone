@@ -1,11 +1,15 @@
+import { User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Post } from '../../../../atoms/postAtom';
+import About from '../../../../components/community/About';
 import PageContext from '../../../../components/Layout/PageContext';
+import Comments from '../../../../components/Posts/Comments/Comments';
 import PostItem from '../../../../components/Posts/PostItem';
 import { auth, firestore } from '../../../../firebase/clientApp';
+import useCommunityData from '../../../../hooks/useCommunityData';
 import usePosts from '../../../../hooks/usePosts';
 
 
@@ -14,6 +18,7 @@ const PostPage:React.FC = () => {
     const [user] = useAuthState(auth)
     const router = useRouter()
     const { postStateValue,setPostStateValue,onDelete,onVote } = usePosts()
+    const { communitySateValue } = useCommunityData()
     
     const fetchPost = async(postId:string)=> {
         try {
@@ -42,10 +47,10 @@ const PostPage:React.FC = () => {
              { postStateValue.selectedPost &&  (<PostItem post={postStateValue.selectedPost} onVote={onVote} onDeletePost={onDelete} userVoteValue={ postStateValue.postVotes.find(item=>item.postId === postStateValue.selectedPost?.id)?.voteValue }
                 userIsCreator={user?.uid === postStateValue.selectedPost?.creatorId}
               />) }
-              comments
+              <Comments user={user as User} selectedPost={postStateValue.selectedPost} communityId={postStateValue.selectedPost?.communityId as string}/>
             </>
             <>
-              About
+              { communitySateValue.currentCommunity && <About communityData = {communitySateValue.currentCommunity}/>}
             </>
         </PageContext>
     )

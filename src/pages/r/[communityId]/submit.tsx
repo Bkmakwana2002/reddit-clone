@@ -1,18 +1,18 @@
 import { Box, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useRecoilValue } from 'recoil';
-import { communityState } from '../../../atoms/communititesAtom';
+import About from '../../../components/community/About';
 import PageContext from '../../../components/Layout/PageContext';
 import NewPostForm from '../../../components/Posts/NewPostForm';
 import { auth } from '../../../firebase/clientApp';
+import useCommunityData from '../../../hooks/useCommunityData';
 
 
 const submitPostPage:React.FC = () => {
 
     const [user] = useAuthState(auth)
-    const communityStateValue = useRecoilValue(communityState)
-    console.log("community",communityStateValue)
+    const { communitySateValue } = useCommunityData()
+    console.log("community",communitySateValue)
     
     return (
         <PageContext>
@@ -23,7 +23,7 @@ const submitPostPage:React.FC = () => {
               </Box> 
             </>
             <>
-
+              { communitySateValue.currentCommunity && <About communityData={ communitySateValue.currentCommunity } />}
             </>
         </PageContext>
     )
