@@ -12,7 +12,7 @@ export interface Community {
 
 export interface CommunitySnippet{
     communityId : string;
-    isModerator?: true;
+    isModerator?: boolean;
     imageURL?: string;
 }
 

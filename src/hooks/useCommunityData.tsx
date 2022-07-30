@@ -56,6 +56,7 @@ const useCommunityData = () => {
             const newSnippet: CommunitySnippet = {
                 communityId: communityData.id,
                 imageURL: communityData.imageUrl || '',
+                isModerator: user?.uid === communityData.creatorId
             }
             batch.set(doc(firestore, `Users/${user?.uid}/communitySnippets`, communityData.id),
                 newSnippet)
