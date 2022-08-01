@@ -163,7 +163,7 @@ const Comments: React.FC<CommentsProps> = ({
                             ) : (
                                 <>
                                     {comments.map(item => (
-                                        <CommenItem key={item.id} comment={item} onDeleteComment={onDeleteComment} loadingDelete={loadingDeleteId === item.id} userId={user.uid} />
+                                        <CommenItem key={item.id} comment={item} onDeleteComment={onDeleteComment} loadingDelete={loadingDeleteId === item.id} userId={user?.uid} />
                                     ))}
                                 </>
                             )}

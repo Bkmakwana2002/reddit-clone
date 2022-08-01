@@ -19,7 +19,7 @@ const submitPostPage:React.FC = () => {
             <>
               <Box p='14px 0px' borderBottom='1px solid' borderColor='white'>
                 <Text>Create a Post</Text>
-                {user && <NewPostForm user={user}/>}
+                {user && <NewPostForm user={user} communityImageUrl={communitySateValue.currentCommunity?.imageUrl}/>}
               </Box> 
             </>
             <>

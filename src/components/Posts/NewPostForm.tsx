@@ -16,7 +16,8 @@ import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import useSelectFile from '../../hooks/useSelectFile';
 
 type NewPostFormProps = {
-  user: User
+  user: User;
+  communityImageUrl?: string;
 };
 
 const formTabs: Tabitem[] = [
@@ -47,7 +48,7 @@ export type Tabitem = {
   icon: typeof Icon.arguments
 }
 
-const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+const NewPostForm: React.FC<NewPostFormProps> = ({ user,communityImageUrl }) => {
 
   const router = useRouter()
 
@@ -66,11 +67,13 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       communityId: communityId as string,
       creatorId: user.uid,
       creatorDisplayName: user.email!.split('@')[0],
+      communityImageUrl:communityImageUrl || '',
       title: textInputs.title,
       body: textInputs.body,
       numberOfComments: 0,
       voteStatus: 0,
-      createdAt: serverTimestamp() as Timestamp
+      createdAt: serverTimestamp() as Timestamp,
+      id: ''
     }
     setLoading(true)
 
