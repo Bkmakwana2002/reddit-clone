@@ -39,7 +39,8 @@ const useCommunityData = () => {
             const snippets = snippetDocs.docs.map(doc => ({ ...doc.data() }))
             setCommunitySateValue(prev => ({
                 ...prev,
-                mySnippets: snippets as CommunitySnippet[]
+                mySnippets: snippets as CommunitySnippet[],
+                snippetsFetched: true
             }))
             setLoading(false)
         } catch (error: any) {
@@ -126,7 +127,8 @@ const useCommunityData = () => {
         if (!user) {
             setCommunitySateValue(prev => ({
                 ...prev,
-                mySnippets: []
+                mySnippets: [],
+                snippetsFetched: false
             }))
             return;
         }

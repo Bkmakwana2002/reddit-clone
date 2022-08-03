@@ -7,19 +7,23 @@ import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRecoilValue } from 'recoil'
 import { communityState } from '../atoms/communititesAtom'
-import { Post } from '../atoms/postAtom'
+import { Post, PostVote } from '../atoms/postAtom'
 import CreatePostLink from '../components/community/CreatePostLink'
+import PersonalHome from '../components/community/PersonalHome'
+import Premium from '../components/community/Premium'
+import Recommendation from '../components/community/Recommendation'
 import PageContext from '../components/Layout/PageContext'
 import PostItem from '../components/Posts/PostItem'
 import PostLoader from '../components/Posts/PostLoader'
 import { auth, firestore } from '../firebase/clientApp'
+import useCommunityData from '../hooks/useCommunityData'
 import usePosts from '../hooks/usePosts'
 
 const Home: NextPage = () => {
 
   const [user, loadingUser] = useAuthState(auth)
   const [loading, setLoading] = useState(false)
-  const communitySateValue = useRecoilValue(communityState)
+  const { communitySateValue } = useCommunityData()
   const { setPostStateValue,postStateValue,onSelect,onDelete,onVote } = usePosts()
 
   const buildUserHomeFeed = async() => {
@@ -64,13 +68,32 @@ const Home: NextPage = () => {
     setLoading(false)
   }
 
-  const getUserPostVotes = () => {
-     
+  const getUserPostVotes = async() => {
+     try {
+
+      const postId = postStateValue.posts.map(post=>post.id)
+      const postVoteQuery = query(collection(firestore,`users/${user?.uid}/postVotes`),where('postId','in',postId))
+      const postVoteDocs = await getDocs(postVoteQuery)
+      const postVotes = postVoteDocs.docs.map(doc=>({ id:doc.id , ...doc.data()}))
+
+      setPostStateValue(prev=>({
+        ...prev,
+        postVotes: postVotes as PostVote[]
+      }))
+      
+     } catch (error:any) {
+       console.log(error.message)
+     }
   }
 
   useEffect(()=>{
 
-  },[communitySateValue.mySnippets])
+    if(communitySateValue.snippetsFetched)
+    {
+      buildUserHomeFeed()
+    }
+
+  },[communitySateValue.snippetsFetched])
 
   useEffect(() => {
     if (!user && !loadingUser) {
@@ -78,6 +101,21 @@ const Home: NextPage = () => {
     }
 
   }, [user, loadingUser])
+
+  useEffect(()=>{
+
+    if(user && postStateValue.posts.length){
+      getUserPostVotes()
+    }
+
+    return ()=>{
+      setPostStateValue(prev=>({
+        ...prev,
+        postVotes:[]
+      }))
+    }
+
+  },[user,postStateValue.posts])
 
   return (
     <PageContext>
@@ -95,9 +133,11 @@ const Home: NextPage = () => {
           )
         }
       </>
-      <>
-        Recomendation
-      </>
+      <Stack spacing={5}>
+        <Recommendation/>
+        <Premium/>
+        <PersonalHome/>
+      </Stack>
     </PageContext>
   )
 }
